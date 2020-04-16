@@ -4,64 +4,72 @@ var SpotifyWebApi = require("node-spotify-api");
 var input = process.argv[2];
 var query = process.argv[3];
 var moment = require("moment");
-var axios =require("axios");
+var axios = require("axios");
 var fs = require("fs");
-
+// var spotify = new Spotify(keys.spotify);
+var request = require('request');
 
 
 if (input === "concert-this") {
-    caxios
-    .get("https://en.wikipedia.org/wiki/Kudos_(granola_bar)")
-    .then(function(response) {
-      // If the axios was successful...
-      // Then log the body from the site!
-      console.log(response.data);
-    })
-    .catch(function(error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an object that comes back with details pertaining to the error that occurred.
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log("Error", error.message);
-      }
-      console.log(error.config);
-    });
-  
-} else if (input === "windy") {
-    console.log("spotify-this-song");
-} else if (input === "rainy") {
-    spotify();
+    searchBandsInTown();
+
+} else if (input === "Spotify-this-song") {
+    console.log("Work in progress I am having trouble with this task");
+} else if (input === "movie-this") {
+    movie();
 } else if (input === "do-what-it-says") {
-    console.log("Just stay inside!");
+    doWhatItSays();
 } else {
-    console.log("Not a valid weather type");
+    console.log("Can't Do that dave");
+}
+
+function searchBandsInTown() {
+    request("https://rest.bandsintown.com/artists/" + query + "?app_id=codingbootcamp", function (error, response, body) {
+        var jsonData = JSON.parse(body);
+
+      console.log("Name of Band: "+ jsonData.name);
+      console.log("Events during or planned during global pandemic: "+ jsonData.upcoming_event_count);
+    });
 }
 
 
 
-function spotify (){
+// This is from the request library: https://www.npmjs.com/package/request
+// OMDB request
+function movie() {
+    request("https://www.omdbapi.com/?t=" + query + "&apikey=trilogy", function (error, response, body) {
+        var jsonData = JSON.parse(body);
 
-    
+        console.log("Title: " + jsonData.Title);
+        console.log("Year: " + jsonData.Year);
+        console.log("Rated: " + jsonData.Rated);
+        console.log("IMDB Rating: " + jsonData.imdbRating);
+        console.log("Country: " + jsonData.Country);
+        console.log("Language: " + jsonData.Language);
+        console.log("Plot: " + jsonData.Plot);
+        console.log("Actors: " + jsonData.Actors);
+    });
 }
+
+function doWhatItSays() {
+    fs.readFile("random.txt", "utf8", function read(err, data) {
+        if (err) throw err;
+        console.log(data);
+    });
+}
+
+
 
 // var spotify = new Spotify({
 //     id: <4537174fa1b54335acd1fa94dba89fda>,
 //     secret: <871137f7535a41b995f6624949a562f4>
 //   });
-   
+
 //   spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
 //     if (err) {
 //       return console.log('Error occurred: ' + err);
 //     }
-   
+
 //   console.log(data); 
 //   });
 
